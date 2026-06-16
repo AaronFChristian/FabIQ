@@ -1,0 +1,18 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+.DS_Store
+*.pyc
+__MACOSX__/
+data/local_index.json
+data/local_docs.json
+eval/results.jsonl
+
+
+# Large media files
+*.mov
+*.mp4
+*.avi
+*.mkv
+*.webm

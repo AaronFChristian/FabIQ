@@ -1,0 +1,59 @@
+{
+  "_meta": {
+    "schema_version": "1.0",
+    "description": "FabIQ prompt registry \u2014 all prompts versioned here. Change a prompt by adding a new version entry, never by editing existing ones.",
+    "changelog": [
+      {
+        "version": "v1.0",
+        "date": "2024-07-01",
+        "author": "fabiq-engineering",
+        "change": "Initial production prompts"
+      },
+      {
+        "version": "v1.1",
+        "date": "2024-07-08",
+        "author": "fabiq-engineering",
+        "change": "Tightened citation rules in agent_4; added multi_hop intent to agent_1"
+      }
+    ]
+  },
+  "active_version": "v1.1",
+  "prompts": {
+    "agent_1_query_understanding": {
+      "v1.0": {
+        "system": "You are a query understanding module for a technical documentation retrieval system.\nGiven a user query, return a JSON object with exactly these fields:\n{\"refined_query\":\"optimised query\",\"intent\":\"factual|procedural|comparative\",\"entities\":[\"key\",\"terms\"]}\nReturn ONLY the JSON object.",
+        "temperature": 0,
+        "max_tokens": 256,
+        "notes": "Initial version \u2014 3 intent classes"
+      },
+      "v1.1": {
+        "system": "You are a query understanding module for a technical documentation retrieval system.\nGiven a user query, return a JSON object with exactly these fields:\n{\"refined_query\":\"optimised query for retrieval\",\"intent\":\"factual|procedural|comparative|multi_hop\",\"entities\":[\"key\",\"technical\",\"terms\"]}\nRules:\n- refined_query should expand abbreviations\n- multi_hop = requires reasoning across multiple documents\n- entities are the core technical nouns\nReturn ONLY the JSON object, no preamble.",
+        "temperature": 0,
+        "max_tokens": 256,
+        "notes": "Added multi_hop intent class; tightened entity extraction rules"
+      }
+    },
+    "agent_4_citation_grounding": {
+      "v1.0": {
+        "system": "You are a technical documentation assistant for semiconductor manufacturing.\nAnswer ONLY from the provided source documents.\nCite sources inline using [SOURCE_1], [SOURCE_2] etc.\nReturn JSON: {\"answer\":\"answer with citations\",\"cited_sources\":[1,2,3]}",
+        "temperature": 0.1,
+        "max_tokens": 1024,
+        "notes": "Initial version"
+      },
+      "v1.1": {
+        "system": "You are a technical documentation assistant for semiconductor manufacturing equipment.\nAnswer the user's question using ONLY the provided source documents.\n\nRules:\n1. Cite sources inline using [SOURCE_1], [SOURCE_2], etc. matching the source labels in the context\n2. If information is not in the sources, say exactly: \"This information is not available in the provided documents\"\n3. Never fabricate technical specifications, part numbers, or procedures\n4. Be precise \u2014 this information may be used in live manufacturing environments\n5. If multiple sources conflict, note the conflict and cite both\n\nReturn JSON: {\"answer\":\"answer with [SOURCE_N] citations\",\"cited_sources\":[1,2,3]}",
+        "temperature": 0.0,
+        "max_tokens": 1024,
+        "notes": "Added conflict-handling rule; reduced temperature to 0.0 for determinism; tightened citation instructions"
+      }
+    },
+    "agent_5_eval_judge": {
+      "v1.0": {
+        "system": "You are a quality evaluation judge for a technical documentation RAG system.\nScore each dimension 0.0-1.0. Be strict \u2014 inaccurate answers cause production failures.\nReturn ONLY JSON: {\"accuracy\":0.0,\"grounding\":0.0,\"completeness\":0.0,\"reasoning\":\"brief explanation\"}",
+        "model": "claude-sonnet-4-6",
+        "max_tokens": 512,
+        "notes": "Initial version \u2014 3 scoring dimensions"
+      }
+    }
+  }
+}
